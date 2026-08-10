@@ -1,0 +1,27 @@
+{
+  "name": "@maitreya/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@maitreya/types": "0.1.0",
+    "@tanstack/react-query": "^5.56.2",
+    "framer-motion": "^11.5.4",
+    "next": "^15.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.4",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.6.2"
+  }
+}

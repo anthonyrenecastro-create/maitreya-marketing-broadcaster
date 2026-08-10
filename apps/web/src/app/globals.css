@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #f8f6ef;
+  --ink: #10271c;
+  --accent: #ce6b2c;
+  --panel: #fffdf7;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at 10% 20%, rgba(206, 107, 44, 0.2), transparent 40%),
+    radial-gradient(circle at 90% 10%, rgba(16, 39, 28, 0.12), transparent 35%),
+    var(--bg);
+  color: var(--ink);
+}
+
+a {
+  color: inherit;
+}

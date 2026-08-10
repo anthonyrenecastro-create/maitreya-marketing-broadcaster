@@ -1,0 +1,9 @@
+api:
+  image: ghcr.io/example/maitreya-api:latest
+  replicas: 2
+  port: 4000
+
+web:
+  image: ghcr.io/example/maitreya-web:latest
+  replicas: 2
+  port: 3000

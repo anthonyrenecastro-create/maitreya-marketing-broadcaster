@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: maitreya-web
+spec:
+  replicas: {{ .Values.web.replicas }}
+  selector:
+    matchLabels:
+      app: maitreya-web
+  template:
+    metadata:
+      labels:
+        app: maitreya-web
+    spec:
+      containers:
+        - name: web
+          image: {{ .Values.web.image }}
+          ports:
+            - containerPort: {{ .Values.web.port }}

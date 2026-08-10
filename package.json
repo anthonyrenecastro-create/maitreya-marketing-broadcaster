@@ -1,0 +1,19 @@
+{
+  "name": "maitreya-marketing-broadcaster",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev -w @maitreya/web",
+    "dev:api": "npm run start:dev -w @maitreya/api",
+    "dev": "npm run dev:web",
+    "build": "npm run build --workspaces",
+    "typecheck": "npm run typecheck --workspaces"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

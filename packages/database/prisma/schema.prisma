@@ -1,0 +1,157 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum OrganizationRole {
+  OWNER
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+enum PropagationStatus {
+  QUEUED
+  PROCESSING
+  SUCCESS
+  FAILED
+}
+
+model Organization {
+  id          String       @id @default(cuid())
+  name        String
+  slug        String       @unique
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  memberships Membership[]
+  projects    Project[]
+  campaigns   Campaign[]
+  contentNodes ContentNode[]
+  socialAccounts SocialAccount[]
+}
+
+model Project {
+  id             String           @id @default(cuid())
+  organizationId String
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name           String
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  campaigns      Campaign[]
+  contentNodes   ContentNode[]
+  socialAccounts SocialAccount[]
+  propagationJobs PropagationJob[]
+
+  @@index([organizationId])
+}
+
+model User {
+  id          String       @id @default(cuid())
+  email       String       @unique
+  displayName String
+  createdAt   DateTime     @default(now())
+  memberships Membership[]
+}
+
+model Membership {
+  id             String           @id @default(cuid())
+  organizationId String
+  userId         String
+  role           OrganizationRole
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+  @@index([organizationId])
+}
+
+model Campaign {
+  id             String      @id @default(cuid())
+  organizationId String
+  projectId      String
+  title          String
+  objective      String
+  channels       String[]
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project        Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  posts          Post[]
+  propagationJobs PropagationJob[]
+
+  @@index([organizationId])
+  @@index([projectId])
+}
+
+model ContentNode {
+  id             String      @id @default(cuid())
+  organizationId String
+  projectId      String
+  label          String
+  body           String
+  metadata       Json?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project        Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  jobs           PropagationJob[]
+
+  @@index([organizationId])
+  @@index([projectId])
+}
+
+model SocialAccount {
+  id             String      @id @default(cuid())
+  organizationId String
+  projectId      String
+  provider       String
+  externalId     String
+  accessToken    String
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project        Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, provider, externalId])
+  @@index([organizationId])
+}
+
+model Post {
+  id             String      @id @default(cuid())
+  organizationId String
+  projectId      String
+  campaignId     String
+  body           String
+  status         String
+  createdAt      DateTime    @default(now())
+  campaign       Campaign    @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([projectId])
+  @@index([campaignId])
+}
+
+model PropagationJob {
+  id             String            @id @default(cuid())
+  organizationId String
+  projectId      String
+  campaignId     String
+  contentNodeId  String
+  provider       String
+  status         PropagationStatus @default(QUEUED)
+  attempts       Int               @default(0)
+  lastError      String?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  project        Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  campaign       Campaign          @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  contentNode    ContentNode       @relation(fields: [contentNodeId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([projectId])
+  @@index([status])
+}
